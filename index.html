@@ -47,11 +47,14 @@ label {
 
 input, select {
   width: 100%;
-  padding: 9px;
+  height: 42px;              /* força mesma altura */
+  padding: 8px 10px;
   margin-top: 5px;
   font-size: 16px;
   border: 1px solid #cccccc;
-  border-radius: 4px;
+  border-radius: 6px;
+  box-sizing: border-box;    /* MUITO IMPORTANTE */
+  background-color: #ffffff;
 }
 
 .result p {
