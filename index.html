@@ -81,8 +81,7 @@
     <p class="highlight">Valor a cobrar: R$ <span id="valorCobrar">0,00</span></p>
     <p>Valor da parcela: R$ <span id="valorParcela">0,00</span></p>
     <p>Taxa total: R$ <span id="taxaTotal">0,00</span></p>
-    <p>Taxa cliente (50%): R$ <span id="taxaCliente">0,00</span></p>
-    <p>Taxa clínica (50%): R$ <span id="taxaClinica">0,00</span></p>
+    <p>Taxa parcelamento: R$ <span id="taxaCliente">0,00</span></p>
   </div>
 </div>
 
@@ -118,8 +117,7 @@
     document.getElementById("valorCobrar").innerText = valorFinal.toFixed(2);
     document.getElementById("valorParcela").innerText = valorParcela.toFixed(2);
     document.getElementById("taxaTotal").innerText = taxaTotal.toFixed(2);
-    document.getElementById("taxaCliente").innerText = taxaCliente.toFixed(2);
-    document.getElementById("taxaClinica").innerText = taxaClinica.toFixed(2);
+    document.getElementById("taxaParcelamento").innerText = taxaCliente.toFixed(2);
   }
 </script>
 
