@@ -72,7 +72,7 @@
   </select>
 
   <label>Número de Parcelas</label>
-  <input type="number" id="parcelas" value="1">
+  <input type="number" id="parcelas" value="1" min="1" max="24">
 
   <label>Valor NF de Execução (R$)</label>
   <input type="number" id="nf" step="0.01" value="0">
@@ -80,17 +80,39 @@
   <div class="result">
     <p class="highlight">Valor a cobrar: R$ <span id="valorCobrar">0,00</span></p>
     <p>Valor da parcela: R$ <span id="valorParcela">0,00</span></p>
-    <p>Taxa total: R$ <span id="taxaTotal">0,00</span></p>
-    <p>Taxa parcelamento: R$ <span id="taxaCliente">0,00</span></p>
+    <p>Taxa do cliente: R$ <span id="taxaCliente">0,00</span></p>
   </div>
 </div>
 
 <script>
-  const taxas = {
-    PIX: 0,
-    DEBITO: 0.015,
-    CREDITO: 0.035
+  const taxasCredito = {
+    1: 0.0389,
+    2: 0.0559,
+    3: 0.0599,
+    4: 0.0669,
+    5: 0.0749,
+    6: 0.0799,
+    7: 0.0849,
+    8: 0.0899,
+    9: 0.0979,
+    10: 0.0999,
+    11: 0.1099,
+    12: 0.1199,
+    13: 0.1299,
+    14: 0.1399,
+    15: 0.1499,
+    16: 0.1559,
+    17: 0.1599,
+    18: 0.1659,
+    19: 0.1749,
+    20: 0.1799,
+    21: 0.1899,
+    22: 0.1949,
+    23: 0.2049,
+    24: 0.2099
   };
+
+  const taxaDebito = 0.0099;
 
   const campos = document.querySelectorAll("input, select");
   campos.forEach(campo => campo.addEventListener("input", calcular));
@@ -101,7 +123,19 @@
     const parcelas = parseInt(document.getElementById("parcelas").value) || 1;
     const nf = parseFloat(document.getElementById("nf").value) || 0;
 
-    const taxa = taxas[pagamento];
+    let taxa = 0;
+
+    if (pagamento === "PIX") {
+      taxa = 0;
+    }
+
+    if (pagamento === "DEBITO") {
+      taxa = taxaDebito;
+    }
+
+    if (pagamento === "CREDITO") {
+      taxa = taxasCredito[parcelas] || 0;
+    }
 
     let valorCobrar = valorBase;
     if (taxa > 0) {
@@ -110,14 +144,13 @@
 
     const taxaTotal = valorCobrar * taxa;
     const taxaCliente = taxaTotal / 2;
-    const taxaClinica = taxaTotal / 2;
+
     const valorFinal = valorCobrar + nf;
     const valorParcela = valorFinal / parcelas;
 
     document.getElementById("valorCobrar").innerText = valorFinal.toFixed(2);
     document.getElementById("valorParcela").innerText = valorParcela.toFixed(2);
-    document.getElementById("taxaTotal").innerText = taxaTotal.toFixed(2);
-    document.getElementById("taxaParcelamento").innerText = taxaCliente.toFixed(2);
+    document.getElementById("taxaCliente").innerText = taxaCliente.toFixed(2);
   }
 </script>
 
