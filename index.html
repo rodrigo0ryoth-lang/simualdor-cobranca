@@ -1,185 +1,342 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Simulador de Cobrança</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #e9f5ef;
-  padding: 20px;
-  color: #333333;
-}
+  body {
+    font-family: Arial, sans-serif;
+    background: #e9f5ef;
+    padding: 20px;
+    color: #333;
+  }
 
-.container {
-  max-width: 500px;
-  margin: auto;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.08);
-  border-top: 5px solid #2a6b45; /* verde escuro */
-}
+  .container {
+    max-width: 520px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    border-top: 5px solid #2a6b45;
+  }
 
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
+  header {
+    text-align: center;
+    margin-bottom: 14px;
+  }
 
-header img {
-  max-width: 180px;
-  margin-bottom: 10px;
-}
+  header img {
+    max-width: 180px;
+    margin-bottom: 8px;
+  }
 
-h2 {
-  color: #2a6b45; /* verde escuro */
-  margin-top: 0;
-  font-size: 24px;
-}
+  h2 {
+    margin: 0;
+    color: #2a6b45;
+  }
 
-label {
-  font-weight: bold;
-  margin-top: 12px;
-  display: block;
-}
+  label {
+    font-weight: bold;
+    margin-top: 12px;
+    display: block;
+  }
 
-input, select {
-  width: 100%;
-  height: 42px;              /* força mesma altura */
-  padding: 8px 10px;
-  margin-top: 5px;
-  font-size: 16px;
-  border: 1px solid #cccccc;
-  border-radius: 6px;
-  box-sizing: border-box;    /* MUITO IMPORTANTE */
-  background-color: #ffffff;
-}
+  input, select {
+    width: 100%;
+    height: 42px;
+    padding: 8px 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+  }
+
   input:focus, select:focus {
-  outline: none;
-  border-color: #2a6b45;
-  box-shadow: 0 0 0 2px rgba(42,107,69,0.15);
+    outline: none;
+    border-color: #2a6b45;
+    box-shadow: 0 0 0 2px rgba(42,107,69,0.15);
+  }
 
-.result p {
-  margin: 8px 0;
-}
+  .result {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+  }
 
-.highlight {
-  font-size: 18px;
-  font-weight: bold;
-  color: #2a6b45; /* verde escuro */
-}
+  .highlight {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2a6b45;
+  }
 
-.internal p {
-  font-size: 14px;
-}
+  .internal {
+    background: #f1f1f1;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 6px;
+  }
 </style>
 </head>
 
 <body>
-<header>
-  <img src="logo.png" alt="Doctor Clin Pinhais">
-  <h2>Simulador de Cobrança</h2>
-</header>
+  <!-- Se quiser usar logo, deixe o arquivo logo.png junto do index.html e descomente: -->
+  <!--
+  <header>
+    <img src="logo.png" alt="Doctor Clin Pinhais">
+  </header>
+  -->
 
-<div class="container">
-<h2>Simulador de Cobrança</h2>
+  <div class="container">
+    <h2>Simulador de Cobrança</h2>
 
-<label>Modo do Simulador</label>
-<select id="modo">
-  <option value="CLIENTE">Cliente</option>
-  <option value="INTERNO">Interno (Clínica)</option>
-</select>
+    <label>Modo do Simulador</label>
+    <select id="modo">
+      <option value="CLIENTE">Cliente</option>
+      <option value="INTERNO">Interno (Clínica)</option>
+    </select>
 
-<label>Valor do Procedimento (R$)</label>
-<input type="number" id="valorBase" step="0.01">
+    <label>Valor do Procedimento (R$)</label>
+    <input type="number" id="valorBase" step="0.01" placeholder="Ex: 1500,00" />
 
-<label>Forma de Pagamento</label>
-<select id="pagamento">
-  <option value="PIX">PIX</option>
-  <option value="DEBITO">Débito</option>
-  <option value="CREDITO">Crédito</option>
-</select>
+    <label>Forma de Pagamento</label>
+    <select id="pagamento">
+      <option value="PIX">PIX</option>
+      <option value="DEBITO">Débito</option>
+      <option value="CREDITO">Cartão de Crédito</option>
+      <option value="LINK">Link de Pagamento</option>
+    </select>
 
-<label>Número de Parcelas</label>
-<input type="number" id="parcelas" min="1" max="24" value="1">
+    <!-- Parcelas (só aparece para Crédito e Link) -->
+    <div id="parcelasGroup" style="display:none;">
+      <label>Número de Parcelas</label>
+      <select id="parcelasSelect"></select>
+      <div class="hint" id="parcelasHint"></div>
+    </div>
 
-<label>Emitir Nota Fiscal?</label>
-<select id="nf">
-  <option value="SIM">Sim</option>
-  <option value="NAO">Não</option>
-</select>
+    <label>Emitir Nota Fiscal?</label>
+    <select id="nf">
+      <option value="NAO">Não</option>
+      <option value="SIM">Sim (8%)</option>
+    </select>
 
-<div class="result">
-  <p class="highlight">Valor a cobrar: R$ <span id="valorCobrar">0,00</span></p>
-  <p>Valor da parcela: R$ <span id="valorParcela">0,00</span></p>
+    <div class="result">
+      <p class="highlight">Valor a cobrar: R$ <span id="valorCobrar">0,00</span></p>
+      <p>Valor da parcela: R$ <span id="valorParcela">0,00</span></p>
 
-  <div id="interno" class="internal" style="display:none;">
-    <p><strong>Detalhamento interno</strong></p>
-    <p>Taxa total do cartão: R$ <span id="taxaTotal">0,00</span></p>
-    <p>Parte paga pelo cliente: R$ <span id="taxaCliente">0,00</span></p>
-    <p>Parte absorvida pela clínica: R$ <span id="taxaClinica">0,00</span></p>
-    <p>Custo NF (8%): R$ <span id="valorNF">0,00</span></p>
-    <p><strong>Valor líquido clínica: R$ <span id="liquidoClinica">0,00</span></strong></p>
+      <div id="internoBox" class="internal" style="display:none;">
+        <p><strong>Detalhamento interno</strong></p>
+        <p>Taxa total do meio de pagamento: R$ <span id="taxaTotal">0,00</span></p>
+        <p>Parte paga pelo cliente (50%): R$ <span id="taxaCliente">0,00</span></p>
+        <p>Parte absorvida pela clínica (50%): R$ <span id="taxaClinica">0,00</span></p>
+        <p>Custo NF (8%): R$ <span id="valorNF">0,00</span></p>
+        <p><strong>Valor líquido clínica: R$ <span id="liquidoClinica">0,00</span></strong></p>
+      </div>
+    </div>
   </div>
-</div>
-</div>
 
 <script>
-const taxasCredito = {
-  1:0.0389,2:0.0559,3:0.0599,4:0.0669,5:0.0749,6:0.0799,
-  7:0.0849,8:0.0899,9:0.0979,10:0.0999,11:0.1099,12:0.1199,
-  13:0.1299,14:0.1399,15:0.1499,16:0.1559,17:0.1599,
-  18:0.1659,19:0.1749,20:0.1799,21:0.1899,22:0.2249,
-  23:0.2349,24:0.2399
-};
+  // ✅ Tabela CARTÃO CRÉDITO (até 21x) — usando a tabela anterior (retenção clínica)
+  const taxasCredito = {
+    1: 0.0389,
+    2: 0.0559,
+    3: 0.0599,
+    4: 0.0669,
+    5: 0.0749,
+    6: 0.0799,
+    7: 0.0849,
+    8: 0.0899,
+    9: 0.0979,
+    10: 0.0999,
+    11: 0.1099,
+    12: 0.1199,
+    13: 0.1299,
+    14: 0.1399,
+    15: 0.1499,
+    16: 0.1559,
+    17: 0.1599,
+    18: 0.1659,
+    19: 0.1749,
+    20: 0.1799,
+    21: 0.1899
+  };
 
-const taxaDebito = 0.0099;
-const taxaNF = 0.08;
+  // ✅ Tabela LINK DE PAGAMENTO (até 24x) — taxas da imagem enviada (retenção do estab.)
+  const taxasLink = {
+    1: 0.0489,
+    2: 0.0659,
+    3: 0.0699,
+    4: 0.0769,
+    5: 0.0849,
+    6: 0.0899,
+    7: 0.1049,
+    8: 0.1099,
+    9: 0.1179,
+    10: 0.1199,
+    11: 0.1299,
+    12: 0.1399,
+    13: 0.1599,
+    14: 0.1699,
+    15: 0.1799,
+    16: 0.1859,
+    17: 0.1899,
+    18: 0.1959,
+    19: 0.2049,
+    20: 0.2099,
+    21: 0.2199,
+    22: 0.2249,
+    23: 0.2349,
+    24: 0.2399
+  };
 
-document.querySelectorAll("input, select").forEach(el => {
-  el.addEventListener("input", calcular);
-});
+  // Débito e NF
+  const taxaDebito = 0.0099; // 0,99%
+  const taxaNF = 0.08;       // 8%
 
-function calcular() {
-  const modo = document.getElementById("modo").value;
-  const valorBase = parseFloat(document.getElementById("valorBase").value) || 0;
-  const pagamento = document.getElementById("pagamento").value;
-  const parcelas = parseInt(document.getElementById("parcelas").value) || 1;
-  const nf = document.getElementById("nf").value;
+  const els = {
+    modo: document.getElementById("modo"),
+    valorBase: document.getElementById("valorBase"),
+    pagamento: document.getElementById("pagamento"),
+    parcelasGroup: document.getElementById("parcelasGroup"),
+    parcelasSelect: document.getElementById("parcelasSelect"),
+    parcelasHint: document.getElementById("parcelasHint"),
+    nf: document.getElementById("nf"),
 
-  let taxa = 0;
-  if (pagamento === "DEBITO") taxa = taxaDebito;
-  if (pagamento === "CREDITO") taxa = taxasCredito[parcelas] || 0;
+    valorCobrar: document.getElementById("valorCobrar"),
+    valorParcela: document.getElementById("valorParcela"),
 
-  let valorCobrar = valorBase;
-  if (taxa > 0) valorCobrar = valorBase / (1 - (taxa / 2));
+    internoBox: document.getElementById("internoBox"),
+    taxaTotal: document.getElementById("taxaTotal"),
+    taxaCliente: document.getElementById("taxaCliente"),
+    taxaClinica: document.getElementById("taxaClinica"),
+    valorNF: document.getElementById("valorNF"),
+    liquidoClinica: document.getElementById("liquidoClinica"),
+  };
 
-  const taxaTotal = valorCobrar * taxa;
-  const taxaCliente = taxaTotal / 2;
-  const taxaClinica = taxaTotal / 2;
-
-  const valorNF = nf === "SIM" ? valorCobrar * taxaNF : 0;
-  const valorFinal = valorCobrar + valorNF;
-  const valorParcela = valorFinal / parcelas;
-
-  const liquidoClinica = valorFinal - taxaTotal - valorNF;
-
-  document.getElementById("valorCobrar").innerText = valorFinal.toFixed(2);
-  document.getElementById("valorParcela").innerText = valorParcela.toFixed(2);
-
-  if (modo === "INTERNO") {
-    document.getElementById("interno").style.display = "block";
-    document.getElementById("taxaTotal").innerText = taxaTotal.toFixed(2);
-    document.getElementById("taxaCliente").innerText = taxaCliente.toFixed(2);
-    document.getElementById("taxaClinica").innerText = taxaClinica.toFixed(2);
-    document.getElementById("valorNF").innerText = valorNF.toFixed(2);
-    document.getElementById("liquidoClinica").innerText = liquidoClinica.toFixed(2);
-  } else {
-    document.getElementById("interno").style.display = "none";
+  function formatBR(v) {
+    return (Number(v) || 0).toFixed(2);
   }
-}
+
+  function setParcelasOptions(min, max) {
+    els.parcelasSelect.innerHTML = "";
+    for (let i = min; i <= max; i++) {
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = `${i}x`;
+      els.parcelasSelect.appendChild(opt);
+    }
+    els.parcelasSelect.value = "1";
+  }
+
+  function updateParcelasUI() {
+    const pg = els.pagamento.value;
+
+    if (pg === "CREDITO") {
+      els.parcelasGroup.style.display = "block";
+      setParcelasOptions(1, 21);
+      els.parcelasHint.textContent = "Crédito permite até 21x (tabela da maquininha).";
+      return;
+    }
+
+    if (pg === "LINK") {
+      els.parcelasGroup.style.display = "block";
+      setParcelasOptions(1, 24);
+      els.parcelasHint.textContent = "Link de pagamento permite até 24x (tabela do link).";
+      return;
+    }
+
+    // PIX e DÉBITO: não mostrar parcelas, fixa 1x
+    els.parcelasGroup.style.display = "none";
+    els.parcelasSelect.innerHTML = "";
+  }
+
+  function getParcelas() {
+    const pg = els.pagamento.value;
+    if (pg === "CREDITO" || pg === "LINK") {
+      return parseInt(els.parcelasSelect.value || "1", 10);
+    }
+    return 1;
+  }
+
+  function getTaxaPagamento(pg, parcelas) {
+    if (pg === "PIX") return 0;
+    if (pg === "DEBITO") return taxaDebito;
+    if (pg === "CREDITO") return taxasCredito[parcelas] || 0;
+    if (pg === "LINK") return taxasLink[parcelas] || 0;
+    return 0;
+  }
+
+  function calcular() {
+    const modo = els.modo.value;
+    const valorBase = parseFloat(els.valorBase.value) || 0;
+    const pg = els.pagamento.value;
+    const parcelas = getParcelas();
+    const nf = els.nf.value;
+
+    const taxa = getTaxaPagamento(pg, parcelas);
+
+    // Reajuste para repassar 50% da taxa ao cliente
+    let valorCobrarSemNF = valorBase;
+    if (taxa > 0) {
+      valorCobrarSemNF = valorBase / (1 - (taxa / 2));
+    }
+
+    // NF 8% sobre o valor cobrado (sem NF)
+    const valorNF = (nf === "SIM") ? (valorCobrarSemNF * taxaNF) : 0;
+
+    // Total final cobrado do cliente
+    const valorFinal = valorCobrarSemNF + valorNF;
+
+    // Parcelas
+    const valorParcela = valorFinal / parcelas;
+
+    // ✅ Taxas do meio de pagamento incidem sobre o valor final (com NF)
+const taxaTotal = valorFinal * taxa;
+const taxaCliente = taxaTotal / 2;
+const taxaClinica = taxaTotal / 2;
+
+// Quanto sobra pra clínica (visão interna)
+const liquidoClinica = valorFinal - taxaTotal - valorNF;
+
+
+    els.valorCobrar.textContent = formatBR(valorFinal);
+    els.valorParcela.textContent = formatBR(valorParcela);
+
+    if (modo === "INTERNO") {
+      els.internoBox.style.display = "block";
+      els.taxaTotal.textContent = formatBR(taxaTotal);
+      els.taxaCliente.textContent = formatBR(taxaCliente);
+      els.taxaClinica.textContent = formatBR(taxaClinica);
+      els.valorNF.textContent = formatBR(valorNF);
+      els.liquidoClinica.textContent = formatBR(liquidoClinica);
+    } else {
+      els.internoBox.style.display = "none";
+    }
+  }
+
+  // Eventos
+  els.pagamento.addEventListener("input", () => {
+    updateParcelasUI();
+    calcular();
+  });
+  els.parcelasSelect.addEventListener("input", calcular);
+  els.modo.addEventListener("input", calcular);
+  els.valorBase.addEventListener("input", calcular);
+  els.nf.addEventListener("input", calcular);
+
+  // Init
+  updateParcelasUI();
+  calcular();
 </script>
 
 </body>
